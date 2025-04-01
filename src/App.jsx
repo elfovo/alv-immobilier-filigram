@@ -2,10 +2,6 @@ import { useState, useRef } from 'react'
 import JSZip from 'jszip'
 import './App.css'
 
-// Import des assets
-const viteLogo = new URL('./assets/vite.svg', import.meta.url).href
-const reactLogo = new URL('./assets/react.svg', import.meta.url).href
-
 function App() {
   const [images, setImages] = useState([])
   const [isDragging, setIsDragging] = useState(false)
@@ -229,8 +225,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src={viteLogo} alt="Vite Logo" className="tech-logo vite" />
-              <img src={reactLogo} alt="React Logo" className="tech-logo react" />
+              <img src={`${import.meta.env.BASE_URL}Vitejs-logo.svg.png`} alt="Vite Logo" className="tech-logo vite" />
+              <img src={`${import.meta.env.BASE_URL}React-icon.svg.png`} alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>

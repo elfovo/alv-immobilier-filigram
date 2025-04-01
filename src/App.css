@@ -489,38 +489,30 @@ body {
 
 .tech-logos {
   display: flex;
-  gap: 20px;
   justify-content: center;
-  margin-bottom: 20px;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .tech-logo {
-  width: 100px;
-  height: 100px;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  padding: 0.5em;
   will-change: filter;
   transition: all 0.3s ease;
-  opacity: 0.8;
 }
 
 .tech-logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em rgba(100, 108, 255, 0.6));
   transform: scale(1.1);
-  opacity: 1;
 }
 
-.tech-logo.react {
-  animation: logo-spin infinite 20s linear;
+.tech-logo.react:hover {
+  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.6));
 }
 
-.tech-logo.vite {
-  /* Suppression de l'animation pour le logo Vite */
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tech-logo.vite:hover {
+  filter: drop-shadow(0 0 2em rgba(100, 108, 255, 0.6));
 }

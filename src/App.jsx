@@ -228,7 +228,7 @@ function App() {
               <img src="/alv-immobilier-filigram/Vitejs-logo.svg.png" alt="Vite Logo" className="tech-logo vite" />
               <img src="/alv-immobilier-filigram/React-icon.svg.png" alt="React Logo" className="tech-logo react" />
             </div>
-            <p>test de déploiement</p>
+            <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>
           </div>
         </div>

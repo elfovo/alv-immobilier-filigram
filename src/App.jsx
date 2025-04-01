@@ -1,6 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useRef } from 'react'
 import JSZip from 'jszip'
 import './App.css'
 
@@ -27,168 +25,131 @@ function App() {
     e.preventDefault()
     setIsDragging(false)
     const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'))
-    if (files.length > 0) {
-      handleFiles(files)
-    }
+    handleFiles(files)
   }
 
   const handleFiles = (files) => {
     const newImages = files.map(file => {
-      // Nettoyer le nom du fichier
       const cleanName = file.name
-        .replace(/vite|react/gi, '') // Supprimer "vite" et "react" du nom
-        .replace(/[_-]/g, ' ') // Remplacer les tirets et underscores par des espaces
-        .replace(/\s+/g, ' ') // Supprimer les espaces multiples
-        .trim(); // Supprimer les espaces au début et à la fin
+        .replace(/vite|react/gi, '')
+        .replace(/[_-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
 
       return {
         url: URL.createObjectURL(file),
-        name: cleanName || 'Image', // Utiliser 'Image' si le nom est vide
+        name: cleanName || 'Image',
         file: file
       }
     })
     setImages(prevImages => [...prevImages, ...newImages])
+    setMainContentClass('has-images')
   }
 
-  const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files)
+  const handleFileInput = () => {
+    fileInputRef.current.click()
+  }
+
+  const handleFileInputChange = (e) => {
+    const files = Array.from(e.target.files).filter(file => file.type.startsWith('image/'))
     handleFiles(files)
+    e.target.value = null
   }
 
-  const handleDownload = async (imageUrl) => {
-    try {
-      // Créer un canvas pour le traitement de l'image
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      // Charger l'image principale
-      const img = new Image();
-      const imageLoadPromise = new Promise((resolve, reject) => {
-        img.onload = () => {
-          canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
-          ctx.drawImage(img, 0, 0);
-          resolve();
-        };
-        img.onerror = reject;
-      });
-      img.src = imageUrl;
-      await imageLoadPromise;
-
-      // Charger le logo
-      const logo = new Image();
-      const logoLoadPromise = new Promise((resolve, reject) => {
-        logo.onload = () => {
-          const logoWidth = canvas.width * 0.2;
-          const logoHeight = (logo.height / logo.width) * logoWidth;
-          const x = (canvas.width - logoWidth) / 2;
-          const y = (canvas.height - logoHeight) / 2;
-          ctx.globalAlpha = 0.3;
-          ctx.drawImage(logo, x, y, logoWidth, logoHeight);
-          resolve();
-        };
-        logo.onerror = reject;
-      });
-      logo.src = '/logo.png';
-      await logoLoadPromise;
-
-      // Convertir le canvas en blob
-      return new Promise(resolve => {
-        canvas.toBlob(resolve, 'image/jpeg', 0.9);
-      });
-    } catch (error) {
-      console.error('Erreur lors du traitement de l\'image:', error);
-      return null;
-    }
-  };
-
-  const handleDownloadSingle = async (imageUrl, imageName, index) => {
-    // Vérifier si un téléchargement est déjà en cours pour cette image
-    if (isDownloading[index]) return;
-
-    try {
-      // Marquer le début du téléchargement
-      setIsDownloading(prev => ({ ...prev, [index]: true }));
-
-      const blob = await handleDownload(imageUrl);
-      if (blob) {
-        const blobUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        // Utiliser le nom personnalisé de l'image, ou un nom par défaut si vide
-        const fileName = imageName.trim() || `image-alv-${index + 1}.jpg`;
-        link.download = fileName;
-        link.click();
-        
-        setTimeout(() => {
-          URL.revokeObjectURL(blobUrl);
-          // Réinitialiser l'état de téléchargement après 1 seconde
-          setTimeout(() => {
-            setIsDownloading(prev => ({ ...prev, [index]: false }));
-          }, 1000);
-        }, 100);
-      }
-    } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
-      // Réinitialiser l'état en cas d'erreur
-      setIsDownloading(prev => ({ ...prev, [index]: false }));
-    }
-  };
-
-  const handleDownloadAll = async () => {
-    // Vérifier si un téléchargement global est déjà en cours
-    if (isDownloading.all) return;
-
-    try {
-      // Marquer le début du téléchargement global
-      setIsDownloading(prev => ({ ...prev, all: true }));
-
-      const zip = new JSZip();
-      const imgFolder = zip.folder("images-alv");
-      
-      for (let i = 0; i < images.length; i++) {
-        const blob = await handleDownload(images[i].url);
-        if (blob) {
-          // Utiliser le nom personnalisé de l'image, ou un nom par défaut si vide
-          const fileName = images[i].name.trim() || `image-${i + 1}.jpg`;
-          imgFolder.file(fileName, blob);
-        }
-      }
-      
-      const content = await zip.generateAsync({ type: "blob" });
-      const blobUrl = URL.createObjectURL(content);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = 'images-alv.zip';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-
-      // Réinitialiser l'état de téléchargement global après 1 seconde
-      setTimeout(() => {
-        setIsDownloading(prev => ({ ...prev, all: false }));
-      }, 1000);
-    } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
-      // Réinitialiser l'état en cas d'erreur
-      setIsDownloading(prev => ({ ...prev, all: false }));
-    }
-  };
-
-  const handleRemoveImage = (indexToRemove) => {
+  const handleRemoveImage = (index) => {
+    URL.revokeObjectURL(images[index].url)
     setImages(prevImages => {
-      URL.revokeObjectURL(prevImages[indexToRemove].url)
-      return prevImages.filter((_, index) => index !== indexToRemove)
+      const newImages = [...prevImages]
+      newImages.splice(index, 1)
+      if (newImages.length === 0) {
+        setMainContentClass('no-images')
+      }
+      return newImages
     })
   }
 
   const handleRemoveAll = () => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer toutes les images ? Cette action est irréversible.')) {
-      setImages([]);
-      setMainContentClass('no-images');
+      images.forEach(image => URL.revokeObjectURL(image.url))
+      setImages([])
+      setMainContentClass('no-images')
     }
-  };
+  }
+
+  const handleDownload = async (imageUrl) => {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+      return blob
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error)
+      return null
+    }
+  }
+
+  const handleDownloadSingle = async (imageUrl, imageName, index) => {
+    if (isDownloading[index]) return
+
+    try {
+      setIsDownloading(prev => ({ ...prev, [index]: true }))
+
+      const blob = await handleDownload(imageUrl)
+      if (blob) {
+        const blobUrl = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = blobUrl
+        const fileName = imageName.trim() || `image-${index + 1}.jpg`
+        link.download = fileName
+        link.click()
+        
+        setTimeout(() => {
+          URL.revokeObjectURL(blobUrl)
+          setTimeout(() => {
+            setIsDownloading(prev => ({ ...prev, [index]: false }))
+          }, 1000)
+        }, 100)
+      }
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error)
+      setIsDownloading(prev => ({ ...prev, [index]: false }))
+    }
+  }
+
+  const handleDownloadAll = async () => {
+    if (isDownloading.all) return
+
+    try {
+      setIsDownloading(prev => ({ ...prev, all: true }))
+
+      const zip = new JSZip()
+      const imgFolder = zip.folder("images-alv")
+      
+      for (let i = 0; i < images.length; i++) {
+        const blob = await handleDownload(images[i].url)
+        if (blob) {
+          const fileName = images[i].name.trim() || `image-${i + 1}.jpg`
+          imgFolder.file(fileName, blob)
+        }
+      }
+      
+      const content = await zip.generateAsync({ type: "blob" })
+      const blobUrl = URL.createObjectURL(content)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = 'images-alv.zip'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(blobUrl)
+
+      setTimeout(() => {
+        setIsDownloading(prev => ({ ...prev, all: false }))
+      }, 1000)
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error)
+      setIsDownloading(prev => ({ ...prev, all: false }))
+    }
+  }
 
   const handleRenameStart = (index, currentName) => {
     setEditingName(index)
@@ -217,63 +178,27 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    return () => {
-      images.forEach(image => {
-        URL.revokeObjectURL(image.url)
-      })
-    }
-  }, [])
-
   return (
     <div 
       className={`app-container ${isDragging ? 'dragging' : ''}`}
-      onDragOver={(e) => {
-        e.preventDefault();
-        if (!isDragging) setIsDragging(true);
-      }}
-      onDragLeave={(e) => {
-        e.preventDefault();
-        // Vérifier si on quitte réellement la zone de l'application
-        const rect = e.currentTarget.getBoundingClientRect();
-        if (
-          e.clientX <= rect.left ||
-          e.clientX >= rect.right ||
-          e.clientY <= rect.top ||
-          e.clientY >= rect.bottom
-        ) {
-          setIsDragging(false);
-        }
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-        if (files.length > 0) {
-          handleFiles(files);
-        }
-      }}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
-      <main className={`main-content ${images.length === 0 ? 'no-images' : 'has-images'}`}>
-        <div 
-          className={`upload-zone ${isDragging ? 'dragging' : ''}`}
-          onClick={() => fileInputRef.current?.click()}
-        >
+      <div className={`main-content ${mainContentClass}`}>
+        <div className="upload-zone" onClick={handleFileInput}>
           <input
-            ref={fileInputRef}
             type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileInputChange}
             accept="image/*"
             multiple
-            onChange={handleImageUpload}
-            style={{ display: 'none' }}
           />
           <div className="upload-message">
-            <div className="header-logos">
-              <img src="/vite.svg" className="tech-logo" alt="Vite logo" />
-              <img src="/react.svg" className="tech-logo react" alt="React logo" />
-            </div>
-            <p>Glissez-déposez vos photos ici</p>
-            <p className="upload-hint">ou cliquez pour sélectionner</p>
+            <span className="upload-icon">📸</span>
+            <p>Glissez et déposez vos images ici</p>
+            <p>ou cliquez pour sélectionner</p>
           </div>
         </div>
 
@@ -292,13 +217,15 @@ function App() {
                 </svg>
               </button>
               <button 
-                className={`download-all-button ${isDownloading.all ? 'downloading' : ''}`} 
+                className={`download-all-button ${isDownloading.all ? 'downloading' : ''}`}
                 onClick={handleDownloadAll}
                 disabled={isDownloading.all}
+                title="Télécharger toutes les images"
               >
-                {isDownloading.all ? 'Téléchargement...' : `Télécharger toutes les images (${images.length})`}
+                Télécharger toutes les images
               </button>
             </div>
+
             <div className="images-grid">
               {images.map((image, index) => (
                 <div key={index} className="image-container">
@@ -345,7 +272,7 @@ function App() {
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   )
 }

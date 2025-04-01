@@ -109,7 +109,7 @@ function App() {
         };
         
         logo.onerror = reject;
-        logo.src = 'https://elfovo.github.io/alv-immobilier-filigram/logo.png';
+        logo.src = `${import.meta.env.BASE_URL}logo.png`;
       };
       
       img.onerror = reject;
@@ -264,7 +264,7 @@ function App() {
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
                   <div className="watermark">
-                    <img src="https://elfovo.github.io/alv-immobilier-filigram/logo.png" alt="Logo ALV Immobilier" className="logo" />
+                    <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Logo ALV Immobilier" className="logo" />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (

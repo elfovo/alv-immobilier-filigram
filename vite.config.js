@@ -4,7 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/alv-immobilier/',
+  base: '/alv-immobilier-filigram/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

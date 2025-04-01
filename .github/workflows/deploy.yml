@@ -14,8 +14,7 @@ jobs:
       - name: Checkout latest code
         uses: actions/checkout@v4
         with:
-          ref: f2a2271  # Force using the correct commit
-          fetch-depth: 0
+          fetch-depth: 0  # Important pour peaceiris
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

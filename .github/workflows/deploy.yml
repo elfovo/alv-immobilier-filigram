@@ -11,8 +11,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout latest code
+        uses: actions/checkout@v4
         with:
+          ref: f2a2271  # Force using the correct commit
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -24,12 +26,11 @@ jobs:
       - name: Clean install dependencies
         run: |
           rm -rf node_modules
+          rm -rf dist
           npm ci
 
-      - name: Clean and Build
-        run: |
-          rm -rf dist
-          npm run build
+      - name: Build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -37,3 +38,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy from commit ${{ github.sha }}'

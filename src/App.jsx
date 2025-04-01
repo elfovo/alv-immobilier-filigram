@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react'
 import JSZip from 'jszip'
 import './App.css'
-import viteLogo from '/vite.svg'
-import reactLogo from '/react.svg'
+import viteLogo from './assets/vite.svg'
+import reactLogo from './assets/react.svg'
 
 function App() {
   const [images, setImages] = useState([])

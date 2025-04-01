@@ -3,6 +3,7 @@ import JSZip from 'jszip'
 import './App.css'
 
 function App() {
+  const basePath = import.meta.env.DEV ? '' : '/alv-immobilier-filigram';
   const [images, setImages] = useState([])
   const [isDragging, setIsDragging] = useState(false)
   const [mainContentClass, setMainContentClass] = useState('no-images')
@@ -114,7 +115,7 @@ function App() {
         };
         
         logo.onerror = reject;
-        logo.src = '/logo.png';
+        logo.src = `${basePath}/logo.png`;
       };
       
       img.onerror = reject;
@@ -232,8 +233,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src="https://elfovo.github.io/alv-immobilier-filigram/vite.svg" alt="Vite Logo" className="tech-logo vite" />
-              <img src="https://elfovo.github.io/alv-immobilier-filigram/react.svg" alt="React Logo" className="tech-logo react" />
+              <img src={`${basePath}/vite.svg`} alt="Vite Logo" className="tech-logo vite" />
+              <img src={`${basePath}/react.svg`} alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>
@@ -269,7 +270,7 @@ function App() {
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
                   <div className="watermark">
-                    <img src="./logo.png" alt="Logo ALV Immobilier" className="logo" />
+                    <img src={`${basePath}/logo.png`} alt="Logo ALV Immobilier" className="logo" />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (

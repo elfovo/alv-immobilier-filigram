@@ -1,8 +1,10 @@
 import { useState, useRef } from 'react'
 import JSZip from 'jszip'
 import './App.css'
-import viteLogo from './assets/vite.svg'
-import reactLogo from './assets/react.svg'
+
+// Import des assets
+const viteLogo = new URL('./assets/vite.svg', import.meta.url).href
+const reactLogo = new URL('./assets/react.svg', import.meta.url).href
 
 function App() {
   const [images, setImages] = useState([])

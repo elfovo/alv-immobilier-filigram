@@ -3,7 +3,6 @@ import JSZip from 'jszip'
 import './App.css'
 
 function App() {
-  const basePath = import.meta.env.DEV ? '' : '/alv-immobilier-filigram';
   const [images, setImages] = useState([])
   const [isDragging, setIsDragging] = useState(false)
   const [mainContentClass, setMainContentClass] = useState('no-images')
@@ -86,36 +85,29 @@ function App() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        // Définir la taille du canvas à la taille de l'image
         canvas.width = img.width;
         canvas.height = img.height;
         
-        // Dessiner l'image
         ctx.drawImage(img, 0, 0);
         
-        // Charger et dessiner le logo
         logo.onload = () => {
-          // Calculer la taille du logo (15% de la largeur de l'image)
           const logoWidth = img.width * 0.15;
           const logoHeight = (logoWidth * logo.height) / logo.width;
           
-          // Positionner le logo au centre
           const logoX = (img.width - logoWidth) / 2;
           const logoY = (img.height - logoHeight) / 2;
           
-          // Dessiner le logo avec transparence
           ctx.globalAlpha = 0.3;
           ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
           ctx.globalAlpha = 1.0;
           
-          // Convertir le canvas en blob
           canvas.toBlob((blob) => {
             resolve(blob);
           }, 'image/jpeg', 0.9);
         };
         
         logo.onerror = reject;
-        logo.src = `${basePath}/logo.png`;
+        logo.src = `${window.location.origin}${import.meta.env.BASE_URL}logo.png`;
       };
       
       img.onerror = reject;
@@ -233,8 +225,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src={`${basePath}/vite.svg`} alt="Vite Logo" className="tech-logo vite" />
-              <img src={`${basePath}/react.svg`} alt="React Logo" className="tech-logo react" />
+              <img src={`${window.location.origin}${import.meta.env.BASE_URL}vite.svg`} alt="Vite Logo" className="tech-logo vite" />
+              <img src={`${window.location.origin}${import.meta.env.BASE_URL}react.svg`} alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>
@@ -270,7 +262,7 @@ function App() {
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
                   <div className="watermark">
-                    <img src={`${basePath}/logo.png`} alt="Logo ALV Immobilier" className="logo" />
+                    <img src="./logo.png" alt="Logo ALV Immobilier" className="logo" />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (

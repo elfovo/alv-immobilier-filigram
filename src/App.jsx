@@ -107,7 +107,7 @@ function App() {
         };
         
         logo.onerror = reject;
-        logo.src = `${import.meta.env.BASE_URL}logo.png`;
+        logo.src = '/alv-immobilier-filigram/logo.png';
       };
       
       img.onerror = reject;
@@ -225,8 +225,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src={`${import.meta.env.BASE_URL}Vitejs-logo.svg.png`} alt="Vite Logo" className="tech-logo vite" />
-              <img src={`${import.meta.env.BASE_URL}React-icon.svg.png`} alt="React Logo" className="tech-logo react" />
+              <img src="/alv-immobilier-filigram/Vitejs-logo.svg.png" alt="Vite Logo" className="tech-logo vite" />
+              <img src="/alv-immobilier-filigram/React-icon.svg.png" alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>
@@ -262,7 +262,7 @@ function App() {
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
                   <div className="watermark">
-                    <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Logo ALV Immobilier" className="logo" />
+                    <img src="/alv-immobilier-filigram/logo.png" alt="Logo ALV Immobilier" className="logo" />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (

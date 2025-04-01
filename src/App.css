@@ -134,6 +134,14 @@ body {
   letter-spacing: -0.5px;
 }
 
+.upload-message p:last-child {
+  font-size: 1.2em;
+  color: #9ca3af;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+
 .upload-hint {
   color: #9ca3af;
   font-size: 0.75em;
@@ -273,7 +281,6 @@ body {
   overflow-y: auto;
   max-height: calc(100vh - 300px);
   padding: 1.5rem;
-  background: rgba(20, 20, 20, 0.5);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(5px);
@@ -281,11 +288,13 @@ body {
 
 .image-container {
   position: relative;
-  border-radius: 12px;
+  width: 100%;
+  padding-bottom: 75%;
+  background: #1a1a1a;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  background-color: #1a1a1a;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -298,10 +307,12 @@ body {
 }
 
 .property-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  aspect-ratio: 3/2;
+  height: 100%;
   object-fit: cover;
-  display: block;
   transition: transform 0.3s ease;
 }
 
@@ -314,15 +325,20 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 2;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
   pointer-events: none;
-  transition: all 0.3s ease;
 }
 
-.logo {
+.watermark:hover {
+  opacity: 0.5;
+}
+
+.watermark .logo {
   width: 80px;
   height: auto;
-  opacity: 0.3;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .image-info {
@@ -356,6 +372,10 @@ body {
 
 .tech-logo.react {
   animation: logo-spin infinite 20s linear;
+}
+
+.tech-logo.vite {
+  /* Suppression de l'animation pour le logo Vite */
 }
 
 @keyframes slideIn {
@@ -465,4 +485,42 @@ body {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(59, 130, 246, 0.5);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.tech-logos {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tech-logo {
+  width: 100px;
+  height: 100px;
+  will-change: filter;
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+.tech-logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.tech-logo.react {
+  animation: logo-spin infinite 20s linear;
+}
+
+.tech-logo.vite {
+  /* Suppression de l'animation pour le logo Vite */
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

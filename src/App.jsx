@@ -76,80 +76,115 @@ function App() {
     }
   }
 
-  const handleDownload = async (imageUrl) => {
-    try {
-      const response = await fetch(imageUrl)
-      const blob = await response.blob()
-      return blob
-    } catch (error) {
-      console.error('Erreur lors du téléchargement:', error)
-      return null
-    }
-  }
+  const createImageWithWatermark = async (imageUrl) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const logo = new Image();
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Définir la taille du canvas à la taille de l'image
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Dessiner l'image
+        ctx.drawImage(img, 0, 0);
+        
+        // Charger et dessiner le logo
+        logo.onload = () => {
+          // Calculer la taille du logo (15% de la largeur de l'image)
+          const logoWidth = img.width * 0.15;
+          const logoHeight = (logoWidth * logo.height) / logo.width;
+          
+          // Positionner le logo au centre
+          const logoX = (img.width - logoWidth) / 2;
+          const logoY = (img.height - logoHeight) / 2;
+          
+          // Dessiner le logo avec transparence
+          ctx.globalAlpha = 0.3;
+          ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+          ctx.globalAlpha = 1.0;
+          
+          // Convertir le canvas en blob
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, 'image/jpeg', 0.9);
+        };
+        
+        logo.onerror = reject;
+        logo.src = '/logo.png';
+      };
+      
+      img.onerror = reject;
+      img.src = imageUrl;
+    });
+  };
 
   const handleDownloadSingle = async (imageUrl, imageName, index) => {
-    if (isDownloading[index]) return
+    if (isDownloading[index]) return;
 
     try {
-      setIsDownloading(prev => ({ ...prev, [index]: true }))
-
-      const blob = await handleDownload(imageUrl)
+      setIsDownloading(prev => ({ ...prev, [index]: true }));
+      
+      const blob = await createImageWithWatermark(imageUrl);
       if (blob) {
-        const blobUrl = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = blobUrl
-        const fileName = imageName.trim() || `image-${index + 1}.jpg`
-        link.download = fileName
-        link.click()
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        const fileName = imageName.trim() || `image-${index + 1}.jpg`;
+        link.download = fileName;
+        link.click();
         
         setTimeout(() => {
-          URL.revokeObjectURL(blobUrl)
+          URL.revokeObjectURL(blobUrl);
           setTimeout(() => {
-            setIsDownloading(prev => ({ ...prev, [index]: false }))
-          }, 1000)
-        }, 100)
+            setIsDownloading(prev => ({ ...prev, [index]: false }));
+          }, 1000);
+        }, 100);
       }
     } catch (error) {
-      console.error('Erreur lors du téléchargement:', error)
-      setIsDownloading(prev => ({ ...prev, [index]: false }))
+      console.error('Erreur lors du téléchargement:', error);
+      setIsDownloading(prev => ({ ...prev, [index]: false }));
     }
-  }
+  };
 
   const handleDownloadAll = async () => {
-    if (isDownloading.all) return
+    if (isDownloading.all) return;
 
     try {
-      setIsDownloading(prev => ({ ...prev, all: true }))
+      setIsDownloading(prev => ({ ...prev, all: true }));
 
-      const zip = new JSZip()
-      const imgFolder = zip.folder("images-alv")
+      const zip = new JSZip();
+      const imgFolder = zip.folder("images-alv");
       
       for (let i = 0; i < images.length; i++) {
-        const blob = await handleDownload(images[i].url)
+        const blob = await createImageWithWatermark(images[i].url);
         if (blob) {
-          const fileName = images[i].name.trim() || `image-${i + 1}.jpg`
-          imgFolder.file(fileName, blob)
+          const fileName = images[i].name.trim() || `image-${i + 1}.jpg`;
+          imgFolder.file(fileName, blob);
         }
       }
       
-      const content = await zip.generateAsync({ type: "blob" })
-      const blobUrl = URL.createObjectURL(content)
-      const link = document.createElement('a')
-      link.href = blobUrl
-      link.download = 'images-alv.zip'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(blobUrl)
+      const content = await zip.generateAsync({ type: "blob" });
+      const blobUrl = URL.createObjectURL(content);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'images-alv.zip';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
 
       setTimeout(() => {
-        setIsDownloading(prev => ({ ...prev, all: false }))
-      }, 1000)
+        setIsDownloading(prev => ({ ...prev, all: false }));
+      }, 1000);
     } catch (error) {
-      console.error('Erreur lors du téléchargement:', error)
-      setIsDownloading(prev => ({ ...prev, all: false }))
+      console.error('Erreur lors du téléchargement:', error);
+      setIsDownloading(prev => ({ ...prev, all: false }));
     }
-  }
+  };
 
   const handleRenameStart = (index, currentName) => {
     setEditingName(index)
@@ -196,7 +231,10 @@ function App() {
             multiple
           />
           <div className="upload-message">
-            <span className="upload-icon">📸</span>
+            <div className="tech-logos">
+              <img src="/vite.svg" alt="Vite Logo" className="tech-logo vite" />
+              <img src="/react.svg" alt="React Logo" className="tech-logo react" />
+            </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>
           </div>
@@ -222,7 +260,7 @@ function App() {
                 disabled={isDownloading.all}
                 title="Télécharger toutes les images"
               >
-                Télécharger toutes les images
+                Télécharger toutes les images ({images.length})
               </button>
             </div>
 
@@ -231,7 +269,7 @@ function App() {
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
                   <div className="watermark">
-                    <img src="/logo.png" alt="Logo ALV Immobilier" className="logo" />
+                    <img src="./logo.png" alt="Logo ALV Immobilier" className="logo" />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (

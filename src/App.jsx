@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react'
 import JSZip from 'jszip'
 import './App.css'
-import viteLogo from '/vite.svg'
-import reactLogo from '/react.svg'
 
 function App() {
   const [images, setImages] = useState([])
@@ -234,8 +232,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src={viteLogo} alt="Vite Logo" className="tech-logo vite" />
-              <img src={reactLogo} alt="React Logo" className="tech-logo react" />
+              <img src="/alv-immobilier-filigram/vite.svg" alt="Vite Logo" className="tech-logo vite" />
+              <img src="/alv-immobilier-filigram/react.svg" alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>

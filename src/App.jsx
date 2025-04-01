@@ -232,8 +232,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src="./vite.svg" alt="Vite Logo" className="tech-logo vite" />
-              <img src="./react.svg" alt="React Logo" className="tech-logo react" />
+              <img src="https://elfovo.github.io/alv-immobilier-filigram/vite.svg" alt="Vite Logo" className="tech-logo vite" />
+              <img src="https://elfovo.github.io/alv-immobilier-filigram/react.svg" alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>

@@ -7,6 +7,7 @@ import './App.css'
 function App() {
   const [images, setImages] = useState([])
   const [isDragging, setIsDragging] = useState(false)
+  const [mainContentClass, setMainContentClass] = useState('no-images')
   const [isDownloading, setIsDownloading] = useState({})
   const [editingName, setEditingName] = useState(null)
   const [newName, setNewName] = useState('')
@@ -321,7 +322,7 @@ function App() {
                         {image.name}
                       </span>
                     )}
-      </div>
+                  </div>
                   <div className="image-actions">
                     <button 
                       className={`download-button ${isDownloading[index] ? 'downloading' : ''}`}
@@ -337,7 +338,7 @@ function App() {
                       title="Supprimer cette image"
                     >
                       ×
-        </button>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -345,7 +346,7 @@ function App() {
           </div>
         )}
       </main>
-      </div>
+    </div>
   )
 }
 

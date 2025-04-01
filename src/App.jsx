@@ -107,7 +107,7 @@ function App() {
         };
         
         logo.onerror = reject;
-        logo.src = `${window.location.origin}${import.meta.env.BASE_URL}logo.png`;
+        logo.src = 'https://elfovo.github.io/alv-immobilier-filigram/logo.png';
       };
       
       img.onerror = reject;
@@ -225,8 +225,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src={`${window.location.origin}${import.meta.env.BASE_URL}vite.svg`} alt="Vite Logo" className="tech-logo vite" />
-              <img src={`${window.location.origin}${import.meta.env.BASE_URL}react.svg`} alt="React Logo" className="tech-logo react" />
+              <img src="https://elfovo.github.io/alv-immobilier-filigram/vite.svg" alt="Vite Logo" className="tech-logo vite" />
+              <img src="https://elfovo.github.io/alv-immobilier-filigram/react.svg" alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>

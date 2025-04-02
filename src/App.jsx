@@ -9,6 +9,7 @@ function App() {
   const [isDownloading, setIsDownloading] = useState({})
   const [editingName, setEditingName] = useState(null)
   const [newName, setNewName] = useState('')
+  const [watermarkType, setWatermarkType] = useState('pattern') // 'pattern', 'center', 'corner'
   const fileInputRef = useRef(null)
 
   const handleDragOver = (e) => {
@@ -91,15 +92,55 @@ function App() {
         ctx.drawImage(img, 0, 0);
         
         logo.onload = () => {
-          const logoWidth = img.width * 0.15;
-          const logoHeight = (logoWidth * logo.height) / logo.width;
-          
-          const logoX = (img.width - logoWidth) / 2;
-          const logoY = (img.height - logoHeight) / 2;
-          
-          ctx.globalAlpha = 0.3;
-          ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
-          ctx.globalAlpha = 1.0;
+          switch(watermarkType) {
+            case 'pattern':
+              // Taille du logo (environ 15% de la largeur de l'image)
+              const logoWidth = img.width * 0.15;
+              const logoHeight = (logoWidth * logo.height) / logo.width;
+              
+              // Espacement entre les logos
+              const spacingX = logoWidth * 2;
+              const spacingY = logoHeight * 1.5;
+              
+              // Rotation de 30 degrés
+              const angle = -30 * Math.PI / 180;
+              
+              // Appliquer les logos en motif
+              let rowIndex = 0;
+              for (let y = -logoHeight * 2; y < img.height + logoHeight; y += spacingY) {
+                const offsetX = (rowIndex % 2) * (spacingX / 2);
+                for (let x = -logoWidth * 2; x < img.width + logoWidth * 2; x += spacingX) {
+                  ctx.save();
+                  ctx.translate(x + offsetX + logoWidth/2, y + logoHeight/2);
+                  ctx.rotate(angle);
+                  ctx.globalAlpha = 0.85;
+                  ctx.drawImage(logo, -logoWidth/2, -logoHeight/2, logoWidth, logoHeight);
+                  ctx.restore();
+                }
+                rowIndex++;
+              }
+              break;
+
+            case 'center':
+              const centerLogoWidth = img.width * 0.25; // Réduit de 40% à 25%
+              const centerLogoHeight = (centerLogoWidth * logo.height) / logo.width;
+              const centerX = (img.width - centerLogoWidth) / 2;
+              const centerY = (img.height - centerLogoHeight) / 2;
+              
+              ctx.globalAlpha = 0.3; // Plus transparent
+              ctx.drawImage(logo, centerX, centerY, centerLogoWidth, centerLogoHeight);
+              break;
+
+            case 'corner':
+              const cornerLogoWidth = img.width * 0.45;
+              const cornerLogoHeight = (cornerLogoWidth * logo.height) / logo.width;
+              const cornerX = img.width - cornerLogoWidth - (img.width * 0.01);
+              const cornerY = img.height - cornerLogoHeight;
+              
+              ctx.globalAlpha = 1; // Opacité à 100%
+              ctx.drawImage(logo, cornerX, cornerY, cornerLogoWidth, cornerLogoHeight);
+              break;
+          }
           
           canvas.toBlob((blob) => {
             resolve(blob);
@@ -107,7 +148,8 @@ function App() {
         };
         
         logo.onerror = reject;
-        logo.src = '/alv-immobilier-filigram/filigram.png?v=' + Date.now();
+        const logoPath = watermarkType === 'center' ? '/alv-immobilier-filigram/logo.png' : '/alv-immobilier-filigram/ALV.png';
+        logo.src = `${logoPath}?v=${Date.now()}`;
       };
       
       img.onerror = reject;
@@ -225,8 +267,8 @@ function App() {
           />
           <div className="upload-message">
             <div className="tech-logos">
-              <img src="/alv-immobilier-filigram/Vitejs-logo.svg.png" alt="Vite Logo" className="tech-logo vite" />
-              <img src="/alv-immobilier-filigram/React-icon.svg.png" alt="React Logo" className="tech-logo react" />
+              <img src="/alv-immobilier-filigram/vite.svg" alt="Vite Logo" className="tech-logo vite" />
+              <img src="/alv-immobilier-filigram/react.svg" alt="React Logo" className="tech-logo react" />
             </div>
             <p>Glissez et déposez vos images ici</p>
             <p>ou cliquez pour sélectionner</p>
@@ -236,6 +278,15 @@ function App() {
         {images.length > 0 && (
           <div className="preview-zone">
             <div className="preview-header">
+              <select 
+                className="watermark-select"
+                value={watermarkType}
+                onChange={(e) => setWatermarkType(e.target.value)}
+              >
+                <option value="pattern">Filigrane motif</option>
+                <option value="center">Logo centré</option>
+                <option value="corner">Logo en bas à droite</option>
+              </select>
               <button 
                 className="remove-all-button"
                 onClick={handleRemoveAll}
@@ -261,8 +312,12 @@ function App() {
               {images.map((image, index) => (
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
-                  <div className="watermark">
-                    <img src="/alv-immobilier-filigram/filigram.png" alt="Logo ALV Immobilier" className="logo" />
+                  <div className={`watermark ${watermarkType}`}>
+                    <img 
+                      src={watermarkType === 'center' ? '/alv-immobilier-filigram/logo.png' : '/alv-immobilier-filigram/ALV.png'} 
+                      alt="Logo ALV Immobilier" 
+                      className="logo" 
+                    />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (
@@ -304,6 +359,7 @@ function App() {
           </div>
         )}
       </div>
+      <div className="copyright">@ALV Immobilier 2025</div>
     </div>
   )
 }

@@ -107,7 +107,7 @@ function App() {
         };
         
         logo.onerror = reject;
-        logo.src = '/alv-immobilier-filigram/logo.png';
+        logo.src = '/alv-immobilier-filigram/filigram.png?v=' + Date.now();
       };
       
       img.onerror = reject;
@@ -262,7 +262,7 @@ function App() {
                 <div key={index} className="image-container">
                   <img src={image.url} alt={`Image ${index + 1}`} className="property-image" />
                   <div className="watermark">
-                    <img src="/alv-immobilier-filigram/logo.png" alt="Logo ALV Immobilier" className="logo" />
+                    <img src="/alv-immobilier-filigram/filigram.png" alt="Logo ALV Immobilier" className="logo" />
                   </div>
                   <div className="image-info">
                     {editingName === index ? (

@@ -93,12 +93,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 3rem;
+  gap: 4rem;
   margin-bottom: 2rem;
 }
 
 .upload-message .tech-logo {
-  height: 5em;
+  height: 8em;
   padding: 0.5em;
   will-change: filter;
   transition: all 0.3s ease;
@@ -106,8 +106,8 @@ body {
 }
 
 .upload-message .tech-logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-  transform: scale(1.1);
+  filter: drop-shadow(0 0 2.5em #646cffaa);
+  transform: scale(1.15);
   opacity: 1;
 }
 
